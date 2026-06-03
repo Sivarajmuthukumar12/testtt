@@ -1,0 +1,84 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <h2 class="fw-bold mb-4"><i class="bi bi-person-circle text-danger me-2"></i>My Profile</h2>
+
+      @if (loading) {
+        <div class="text-center py-5"><div class="spinner-border text-danger"></div></div>
+      }
+
+      @if (profile) {
+        <!-- Profile Info -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+              <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                style="width:60px;height:60px;font-size:1.5rem">
+                {{ profile.firstName[0] }}{{ profile.lastName[0] }}
+              </div>
+              <div>
+                <h5 class="fw-bold mb-0">{{ profile.firstName }} {{ profile.lastName }}</h5>
+                <span class="badge bg-danger">{{ profile.role }}</span>
+              </div>
+            </div>
+
+            @if (successMsg) { <div class="alert alert-success">{{ successMsg }}</div> }
+            @if (errorMsg) { <div class="alert alert-danger">{{ errorMsg }}</div> }
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">First Name</label>
+                <input type="text" class="form-control" [(ngModel)]="profileForm.firstName">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Last Name</label>
+                <input type="text" class="form-control" [(ngModel)]="profileForm.lastName">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Phone Number</label>
+                <input type="tel" class="form-control" [(ngModel)]="profileForm.phoneNumber">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" class="form-control" [value]="profile.email" readonly>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Address</label>
+                <textarea class="form-control" [(ngModel)]="profileForm.address" rows="2"></textarea>
+              </div>
+            </div>
+
+            <button class="btn btn-danger mt-3" (click)="updateProfile()">
+              <i class="bi bi-save me-2"></i>Save Changes
+            </button>
+          </div>
+        </div>
+
+        <!-- Change Password -->
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-lock text-danger me-2"></i>Change Password</h5>
+
+            @if (pwdSuccess) { <div class="alert alert-success">{{ pwdSuccess }}</div> }
+            @if (pwdError) { <div class="alert alert-danger">{{ pwdError }}</div> }
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Current Password</label>
+                <input type="password" class="form-control" [(ngModel)]="pwdForm.currentPassword">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">New Password</label>
+                <input type="password" class="form-control" [(ngModel)]="pwdForm.newPassword">
+              </div>
+            </div>
+
+            <button class="btn btn-outline-danger mt-3" (click)="changePassword()">
+              <i class="bi bi-key me-2"></i>Change Password
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

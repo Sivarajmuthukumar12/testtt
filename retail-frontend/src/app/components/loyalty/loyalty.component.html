@@ -1,0 +1,39 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-lg rounded-4 text-center p-5">
+        <i class="bi bi-star-fill text-warning" style="font-size:4rem"></i>
+        <h3 class="fw-bold mt-3">Loyalty Points</h3>
+
+        @if (loading) {
+          <div class="spinner-border text-warning mt-3"></div>
+        }
+
+        @if (loyalty) {
+          <div class="display-4 fw-bold text-warning my-3">{{ loyalty.points }}</div>
+          <p class="text-muted">points available</p>
+
+          <div class="bg-light rounded-3 p-4 mt-3 text-start">
+            <h6 class="fw-bold mb-3">How it works</h6>
+            <div class="d-flex align-items-center mb-2">
+              <i class="bi bi-arrow-up-circle text-success me-2 fs-5"></i>
+              <span>Earn <strong>10 points</strong> for every ₹100 spent</span>
+            </div>
+            <div class="d-flex align-items-center mb-2">
+              <i class="bi bi-arrow-down-circle text-danger me-2 fs-5"></i>
+              <span>Redeem <strong>100 points</strong> = ₹10 discount</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-cash-coin text-warning me-2 fs-5"></i>
+              <span>Your points worth: <strong>₹{{ loyalty.equivalentRupees }}</strong></span>
+            </div>
+          </div>
+
+          <a routerLink="/cart" class="btn btn-warning fw-semibold mt-4 px-4">
+            <i class="bi bi-cart me-2"></i>Use Points at Checkout
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</div>

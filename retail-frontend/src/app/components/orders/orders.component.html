@@ -1,0 +1,89 @@
+<div class="container py-4">
+  <h2 class="fw-bold mb-4"><i class="bi bi-bag text-danger me-2"></i>My Orders</h2>
+
+  @if (reorderSuccess) {
+    <div class="alert alert-success alert-dismissible">
+      <i class="bi bi-check-circle me-2"></i>{{ reorderSuccess }}
+    </div>
+  }
+
+  @if (loading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-danger"></div>
+    </div>
+  }
+
+  @if (!loading) {
+    @if (orders.length === 0) {
+      <div class="text-center py-5">
+        <i class="bi bi-bag-x text-muted" style="font-size:5rem"></i>
+        <h4 class="mt-3 text-muted">No orders yet</h4>
+        <a routerLink="/products" class="btn btn-danger mt-3">Start Shopping</a>
+      </div>
+    } @else {
+      <div class="row g-3">
+        @for (order of orders; track order.id) {
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                  <div>
+                    <h6 class="fw-bold mb-1">Order #{{ order.id }}</h6>
+                    <small class="text-muted">{{ order.orderDate | date:'dd MMM yyyy, hh:mm a' }}</small>
+                  </div>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge rounded-pill {{ getStatusClass(order.orderStatus) }} px-3 py-2">
+                      <i class="bi {{ getStatusIcon(order.orderStatus) }} me-1"></i>{{ order.orderStatus }}
+                    </span>
+                    <span class="fw-bold text-danger fs-5">₹{{ order.finalAmount }}</span>
+                  </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="mt-3">
+                  @for (item of order.items; track item.productId) {
+                    <div class="d-flex justify-content-between py-1 border-bottom">
+                      <span class="text-muted">{{ item.productName }} × {{ item.quantity }}</span>
+                      <span>₹{{ item.lineTotal }}</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Discounts -->
+                @if (order.discountAmount > 0) {
+                  <div class="d-flex justify-content-between mt-2 text-success small">
+                    <span><i class="bi bi-tag me-1"></i>Discount ({{ order.couponCode }})</span>
+                    <span>-₹{{ order.discountAmount }}</span>
+                  </div>
+                }
+                @if (order.loyaltyPointsEarned > 0) {
+                  <div class="d-flex justify-content-between mt-1 text-warning small">
+                    <span><i class="bi bi-star me-1"></i>Points Earned</span>
+                    <span>+{{ order.loyaltyPointsEarned }} pts</span>
+                  </div>
+                }
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 mt-3">
+                  <button class="btn btn-outline-danger btn-sm" (click)="reorder(order.id)">
+                    <i class="bi bi-arrow-repeat me-1"></i>Reorder
+                  </button>
+                  @if (order.orderStatus !== 'Delivered' && order.orderStatus !== 'Cancelled') {
+                    <span class="badge bg-light text-muted border align-self-center px-3 py-2">
+                      <i class="bi bi-clock me-1"></i>Tracking: {{ order.orderStatus }}
+                    </span>
+                  }
+                  @if (order.deliveredDate) {
+                    <small class="text-muted align-self-center">
+                      Delivered: {{ order.deliveredDate | date:'dd MMM yyyy' }}
+                    </small>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

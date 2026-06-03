@@ -1,0 +1,99 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      @if (placedOrder) {
+        <!-- Success State -->
+        <div class="card border-0 shadow-lg rounded-4 text-center p-5">
+          <div class="text-success mb-3">
+            <i class="bi bi-check-circle-fill" style="font-size:5rem"></i>
+          </div>
+          <h3 class="fw-bold">Order Placed!</h3>
+          <p class="text-muted">Order #{{ placedOrder.id }} confirmed</p>
+          <div class="bg-light rounded-3 p-3 mb-4 text-start">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Total</span>
+              <span>₹{{ placedOrder.totalAmount }}</span>
+            </div>
+            @if (placedOrder.discountAmount > 0) {
+              <div class="d-flex justify-content-between mb-2 text-success">
+                <span>Discount</span>
+                <span>-₹{{ placedOrder.discountAmount }}</span>
+              </div>
+            }
+            <div class="d-flex justify-content-between fw-bold">
+              <span>Final Amount</span>
+              <span class="text-danger">₹{{ placedOrder.finalAmount }}</span>
+            </div>
+            @if (placedOrder.loyaltyPointsEarned > 0) {
+              <div class="d-flex justify-content-between mt-2 text-warning">
+                <span><i class="bi bi-star me-1"></i>Points Earned</span>
+                <span>+{{ placedOrder.loyaltyPointsEarned }} pts</span>
+              </div>
+            }
+          </div>
+          <p class="text-muted small">A confirmation email has been sent to your registered email.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <a routerLink="/orders" class="btn btn-danger">
+              <i class="bi bi-bag me-2"></i>View Orders
+            </a>
+            <a routerLink="/products" class="btn btn-outline-danger">
+              <i class="bi bi-grid me-2"></i>Continue Shopping
+            </a>
+          </div>
+        </div>
+      } @else {
+        <!-- Checkout Form -->
+        <div class="card border-0 shadow-lg rounded-4">
+          <div class="card-body p-4">
+            <h4 class="fw-bold mb-4"><i class="bi bi-credit-card text-danger me-2"></i>Checkout</h4>
+
+            @if (error) {
+              <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+              </div>
+            }
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Delivery Address *</label>
+              <textarea class="form-control" [(ngModel)]="deliveryAddress" rows="3"
+                placeholder="Enter your full delivery address"></textarea>
+            </div>
+
+            @if (couponCode) {
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Coupon Applied</label>
+                <div class="input-group">
+                  <span class="input-group-text text-success"><i class="bi bi-check-circle"></i></span>
+                  <input type="text" class="form-control" [value]="couponCode" readonly>
+                </div>
+              </div>
+            }
+
+            @if (loyaltyPointsToRedeem > 0) {
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Loyalty Points Redeeming</label>
+                <div class="input-group">
+                  <span class="input-group-text text-warning"><i class="bi bi-star"></i></span>
+                  <input type="text" class="form-control" [value]="loyaltyPointsToRedeem + ' pts = ₹' + (loyaltyPointsToRedeem/100*10)" readonly>
+                </div>
+              </div>
+            }
+
+            <button class="btn btn-danger w-100 py-2 fw-semibold mt-2" (click)="placeOrder()" [disabled]="loading">
+              @if (loading) {
+                <span class="spinner-border spinner-border-sm me-2"></span>Placing Order...
+              } @else {
+                <i class="bi bi-bag-check me-2"></i>Place Order
+              }
+            </button>
+
+            <a routerLink="/cart" class="btn btn-outline-secondary w-100 mt-2">
+              <i class="bi bi-arrow-left me-2"></i>Back to Cart
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,97 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-ticket text-danger me-2"></i>Coupons</h2>
+    <button class="btn btn-danger" (click)="showForm = !showForm">
+      <i class="bi bi-plus-lg me-2"></i>New Coupon
+    </button>
+  </div>
+
+  @if (successMsg) {
+    <div class="alert alert-success">{{ successMsg }}</div>
+  }
+
+  @if (showForm) {
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-3">Create Coupon</h5>
+        @if (errorMsg) { <div class="alert alert-danger">{{ errorMsg }}</div> }
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Code *</label>
+            <input type="text" class="form-control text-uppercase" [(ngModel)]="form.code" placeholder="SAVE20">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Discount % (or 0)</label>
+            <input type="number" class="form-control" [(ngModel)]="form.discountPercentage" min="0" max="100">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Fixed Amount ₹ (or 0)</label>
+            <input type="number" class="form-control" [(ngModel)]="form.fixedDiscountAmount" min="0">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Min Order ₹</label>
+            <input type="number" class="form-control" [(ngModel)]="form.minimumOrderAmount" min="0">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Expiry Date *</label>
+            <input type="datetime-local" class="form-control" [(ngModel)]="form.expiryDate">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Usage Limit</label>
+            <input type="number" class="form-control" [(ngModel)]="form.usageLimit" min="1">
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn btn-danger" (click)="save()"><i class="bi bi-save me-2"></i>Save</button>
+          <button class="btn btn-outline-secondary" (click)="showForm = false">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="text-center py-4"><div class="spinner-border text-danger"></div></div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Code</th>
+              <th>Discount</th>
+              <th>Min Order</th>
+              <th>Expiry</th>
+              <th>Used / Limit</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of coupons; track c.id) {
+              <tr>
+                <td><span class="badge bg-dark fs-6">{{ c.code }}</span></td>
+                <td>
+                  @if (c.discountPercentage > 0) { <span class="text-success">{{ c.discountPercentage }}% off</span> }
+                  @else { <span class="text-success">₹{{ c.fixedDiscountAmount }} off</span> }
+                </td>
+                <td>₹{{ c.minimumOrderAmount }}</td>
+                <td><small>{{ c.expiryDate | date:'dd MMM yyyy' }}</small></td>
+                <td>{{ c.usedCount }} / {{ c.usageLimit }}</td>
+                <td>
+                  <span class="badge" [class.bg-success]="c.isActive" [class.bg-secondary]="!c.isActive">
+                    {{ c.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-outline-danger btn-sm" (click)="delete(c.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

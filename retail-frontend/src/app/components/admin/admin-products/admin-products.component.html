@@ -1,0 +1,130 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-box text-danger me-2"></i>Products</h2>
+    <button class="btn btn-danger" (click)="openCreate()">
+      <i class="bi bi-plus-lg me-2"></i>Add Product
+    </button>
+  </div>
+
+  @if (successMsg) {
+    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>{{ successMsg }}</div>
+  }
+
+  <!-- Product Form Modal -->
+  @if (showForm) {
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-3">{{ editingProduct ? 'Edit Product' : 'New Product' }}</h5>
+        @if (errorMsg) {
+          <div class="alert alert-danger">{{ errorMsg }}</div>
+        }
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Name *</label>
+            <input type="text" class="form-control" [(ngModel)]="form.name" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Price (₹) *</label>
+            <input type="number" class="form-control" [(ngModel)]="form.price" min="1">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Category *</label>
+            <select class="form-select" [(ngModel)]="form.categoryId">
+              <option [value]="0">Select...</option>
+              @for (cat of categories; track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea class="form-control" [(ngModel)]="form.description" rows="2"></textarea>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Stock Qty</label>
+            <input type="number" class="form-control" [(ngModel)]="form.stockQuantity" min="0">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Min Stock Level</label>
+            <input type="number" class="form-control" [(ngModel)]="form.minimumStockLevel" min="0">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Image URL</label>
+            <input type="text" class="form-control" [(ngModel)]="form.imageUrl" placeholder="https://...">
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" [(ngModel)]="form.isActive" id="isActive">
+              <label class="form-check-label fw-semibold" for="isActive">Active</label>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn btn-danger" (click)="save()">
+            <i class="bi bi-save me-2"></i>Save
+          </button>
+          <button class="btn btn-outline-secondary" (click)="showForm = false">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Products Table -->
+  @if (loading) {
+    <div class="text-center py-4"><div class="spinner-border text-danger"></div></div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of products; track p.id) {
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ p.name }}</div>
+                  <small class="text-muted">{{ p.description | slice:0:50 }}...</small>
+                </td>
+                <td><span class="badge bg-light text-dark border">{{ p.categoryName }}</span></td>
+                <td class="fw-bold text-danger">₹{{ p.price }}</td>
+                <td>
+                  <span [class]="p.isLowStock ? 'text-danger fw-bold' : ''">{{ p.stockQuantity }}</span>
+                  @if (p.isLowStock) {
+                    <i class="bi bi-exclamation-triangle text-danger ms-1" title="Low Stock"></i>
+                  }
+                </td>
+                <td>
+                  <span class="badge" [class.bg-success]="p.isActive" [class.bg-secondary]="!p.isActive">
+                    {{ p.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex gap-1">
+                    <button class="btn btn-outline-primary btn-sm" (click)="openEdit(p)" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm" [class.btn-outline-warning]="p.isActive" [class.btn-outline-success]="!p.isActive"
+                      (click)="toggleActive(p)" [title]="p.isActive ? 'Disable' : 'Enable'">
+                      <i class="bi" [class.bi-eye-slash]="p.isActive" [class.bi-eye]="!p.isActive"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" (click)="delete(p)" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

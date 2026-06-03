@@ -1,0 +1,70 @@
+<div class="container py-4">
+  <h2 class="fw-bold mb-4"><i class="bi bi-truck text-danger me-2"></i>My Deliveries</h2>
+
+  @if (successMsg) {
+    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>{{ successMsg }}</div>
+  }
+
+  @if (loading) {
+    <div class="text-center py-5"><div class="spinner-border text-danger"></div></div>
+  }
+
+  @if (!loading) {
+    @if (orders.length === 0) {
+      <div class="text-center py-5">
+        <i class="bi bi-truck text-muted" style="font-size:5rem"></i>
+        <h4 class="mt-3 text-muted">No assigned orders</h4>
+        <p class="text-muted">Check back later for new deliveries.</p>
+      </div>
+    } @else {
+      <div class="row g-3">
+        @for (order of orders; track order.id) {
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h5 class="fw-bold mb-1">Order #{{ order.id }}</h5>
+                    <p class="text-muted mb-0 small">{{ order.orderDate | date:'dd MMM yyyy, hh:mm a' }}</p>
+                  </div>
+                  <span class="badge rounded-pill {{ getStatusClass(order.orderStatus) }} px-3 py-2">
+                    {{ order.orderStatus }}
+                  </span>
+                </div>
+
+                <div class="bg-light rounded-3 p-3 mb-3">
+                  <p class="fw-semibold mb-1"><i class="bi bi-person me-2"></i>{{ order.customerName }}</p>
+                  <p class="fw-bold text-danger mb-0"><i class="bi bi-currency-rupee me-1"></i>{{ order.finalAmount }}</p>
+                </div>
+
+                <!-- Items -->
+                <div class="mb-3">
+                  @for (item of order.items; track item.productId) {
+                    <div class="d-flex justify-content-between py-1 border-bottom">
+                      <span class="text-muted small">{{ item.productName }} × {{ item.quantity }}</span>
+                      <span class="small">₹{{ item.lineTotal }}</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2">
+                  @if (order.orderStatus === 'Pending') {
+                    <button class="btn btn-info text-white fw-semibold flex-grow-1" (click)="accept(order.id)">
+                      <i class="bi bi-check-circle me-2"></i>Accept Order
+                    </button>
+                  }
+                  @if (order.orderStatus === 'Accepted' || order.orderStatus === 'OutForDelivery') {
+                    <button class="btn btn-success fw-semibold flex-grow-1" (click)="markDelivered(order.id)">
+                      <i class="bi bi-check-circle-fill me-2"></i>Mark Delivered
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

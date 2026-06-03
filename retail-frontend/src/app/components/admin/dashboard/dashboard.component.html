@@ -1,0 +1,175 @@
+<div class="container-fluid py-4">
+  <h2 class="fw-bold mb-4"><i class="bi bi-speedometer2 text-danger me-2"></i>Admin Dashboard</h2>
+
+  @if (loading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-danger" style="width:3rem;height:3rem"></div>
+    </div>
+  }
+
+  @if (stats) {
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-danger text-white">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 opacity-75">Total Orders</p>
+                <h2 class="fw-bold mb-0">{{ stats.totalOrders }}</h2>
+              </div>
+              <i class="bi bi-bag-fill opacity-50" style="font-size:3rem"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-success text-white">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 opacity-75">Total Revenue</p>
+                <h2 class="fw-bold mb-0">₹{{ stats.totalRevenue | number:'1.0-0' }}</h2>
+              </div>
+              <i class="bi bi-currency-rupee opacity-50" style="font-size:3rem"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-primary text-white">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 opacity-75">Customers</p>
+                <h2 class="fw-bold mb-0">{{ stats.totalCustomers }}</h2>
+              </div>
+              <i class="bi bi-people-fill opacity-50" style="font-size:3rem"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-warning text-dark">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 opacity-75">Products</p>
+                <h2 class="fw-bold mb-0">{{ stats.totalProducts }}</h2>
+              </div>
+              <i class="bi bi-box-fill opacity-50" style="font-size:3rem"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4 text-center">
+            <i class="bi bi-clock text-warning" style="font-size:2.5rem"></i>
+            <h3 class="fw-bold mt-2">{{ stats.pendingOrders }}</h3>
+            <p class="text-muted mb-0">Pending Orders</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4 text-center">
+            <i class="bi bi-check-circle text-success" style="font-size:2.5rem"></i>
+            <h3 class="fw-bold mt-2">{{ stats.deliveredOrders }}</h3>
+            <p class="text-muted mb-0">Delivered Orders</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4 text-center">
+            <i class="bi bi-exclamation-triangle text-danger" style="font-size:2.5rem"></i>
+            <h3 class="fw-bold mt-2">{{ stats.lowStockProducts }}</h3>
+            <p class="text-muted mb-0">Low Stock Products</p>
+            @if (stats.lowStockProducts > 0) {
+              <a routerLink="/admin/inventory" class="btn btn-outline-danger btn-sm mt-2">View</a>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Selling Products -->
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-trophy text-warning me-2"></i>Top Selling Products</h5>
+        @if (stats.topSellingProducts.length === 0) {
+          <p class="text-muted">No sales data yet.</p>
+        } @else {
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Product</th>
+                  <th>Qty Sold</th>
+                  <th>Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of stats.topSellingProducts; track p.productId; let i = $index) {
+                  <tr>
+                    <td>
+                      @if (i === 0) { <i class="bi bi-trophy-fill text-warning"></i> }
+                      @else if (i === 1) { <i class="bi bi-trophy-fill text-secondary"></i> }
+                      @else if (i === 2) { <i class="bi bi-trophy-fill text-danger" style="color:#cd7f32!important"></i> }
+                      @else { {{ i + 1 }} }
+                    </td>
+                    <td class="fw-semibold">{{ p.productName }}</td>
+                    <td><span class="badge bg-danger">{{ p.totalQuantitySold }}</span></td>
+                    <td class="text-success fw-semibold">₹{{ p.totalRevenue | number:'1.0-0' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-3 mt-2">
+      <div class="col-md-3">
+        <a routerLink="/admin/orders" class="card border-0 shadow-sm rounded-4 text-decoration-none text-dark">
+          <div class="card-body p-3 text-center">
+            <i class="bi bi-list-check text-danger fs-3"></i>
+            <p class="mb-0 mt-1 fw-semibold">Manage Orders</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a routerLink="/admin/products" class="card border-0 shadow-sm rounded-4 text-decoration-none text-dark">
+          <div class="card-body p-3 text-center">
+            <i class="bi bi-box text-primary fs-3"></i>
+            <p class="mb-0 mt-1 fw-semibold">Manage Products</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a routerLink="/admin/coupons" class="card border-0 shadow-sm rounded-4 text-decoration-none text-dark">
+          <div class="card-body p-3 text-center">
+            <i class="bi bi-ticket text-success fs-3"></i>
+            <p class="mb-0 mt-1 fw-semibold">Manage Coupons</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a routerLink="/admin/inventory" class="card border-0 shadow-sm rounded-4 text-decoration-none text-dark">
+          <div class="card-body p-3 text-center">
+            <i class="bi bi-archive text-warning fs-3"></i>
+            <p class="mb-0 mt-1 fw-semibold">Inventory</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  }
+</div>
